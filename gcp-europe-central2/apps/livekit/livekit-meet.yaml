@@ -77,10 +77,10 @@ spec:
   ingressClassName: nginx
   tls:
   - hosts:
-      - livekit-meet.gcp-europe-central2.stunner.cc
+      - livekit.gcp-europe-central2.stunner.cc
     secretName: livekit-meet-secret-tls
   rules:
-  - host: livekit-meet.gcp-europe-central2.stunner.cc
+  - host: livekit.gcp-europe-central2.stunner.cc
     http:
       paths:
       - path: /
