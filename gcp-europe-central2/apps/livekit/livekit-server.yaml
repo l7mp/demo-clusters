@@ -141,7 +141,6 @@ spec:
         app.kubernetes.io/name: livekit-server
         app.kubernetes.io/instance: livekit
     spec:
-      serviceAccountName: livekit
       terminationGracePeriodSeconds: 18000 # 5 hours
       containers:
         - name: livekit-server
