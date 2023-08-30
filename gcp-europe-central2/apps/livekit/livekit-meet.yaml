@@ -29,7 +29,7 @@ spec:
       volumes:
       - name: config-volume
         configMap:
-          name: my-configmap
+          name: livekit-meet
 ---
 apiVersion: v1
 kind: ConfigMap
