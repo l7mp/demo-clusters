@@ -12,8 +12,6 @@ spec:
     repoURL: 'https://l7mp.io/stunner'
     targetRevision: 0.15.0
     chart: stunner
-    helm:
-      values: ""
   project: default
   syncPolicy:
     automated:
