@@ -12,13 +12,13 @@ The following environment was started in GCP:
  - Nodes: 1 x e2-standard-4 (4 CPU, 16GB memory)
 
  Runnig applications:
-  - `LiveKit`: [livekit.gcp-europe-central2.stunner.cc](livekit.gcp-europe-central2.stunner.cc)
-  - `Jitsi`: [jitsi.gcp-europe-central2.stunner.cc](jitsi.gcp-europe-central2.stunner.cc)
-  - `Edumeet`: [edumeet.gcp-europe-central2.stunner.cc](edumeet.gcp-europe-central2.stunner.cc)
-  - `Neko`: [neko.gcp-europe-central2.stunner.cc](neko.gcp-europe-central2.stunner.cc)
-  - `Cloud Retro`: [cloudretro.gcp-europe-central2.stunner.cc](cloudretro.gcp-europe-central2.stunner.cc)
-  - `Kurento Magic Mirror`: [magicmirror.gcp-europe-central2.stunner.cc](magicmirror.gcp-europe-central2.stunner.cc)
-  - `Kurento one to one call`: [one2one.gcp-europe-central2.stunner.cc](one2one.gcp-europe-central2.stunner.cc)
+  - `LiveKit`: [livekit.gcp-europe-central2.stunner.cc](https://livekit.gcp-europe-central2.stunner.cc)
+  - `Jitsi`: [jitsi.gcp-europe-central2.stunner.cc](https://jitsi.gcp-europe-central2.stunner.cc)
+  - `Edumeet`: [edumeet.gcp-europe-central2.stunner.cc](https://edumeet.gcp-europe-central2.stunner.cc)
+  - `Neko`: [neko.gcp-europe-central2.stunner.cc](https://neko.gcp-europe-central2.stunner.cc)
+  - `Cloud Retro`: [cloudretro.gcp-europe-central2.stunner.cc](https://cloudretro.gcp-europe-central2.stunner.cc)
+  - `Kurento Magic Mirror`: [magicmirror.gcp-europe-central2.stunner.cc](https://magicmirror.gcp-europe-central2.stunner.cc)
+  - `Kurento one to one call`: [one2one.gcp-europe-central2.stunner.cc](https://one2one.gcp-europe-central2.stunner.cc)
 
 ## ArgoCD reference
 
