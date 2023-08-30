@@ -8,5 +8,5 @@ spec:
     - name: udp-gateway
   rules:
     - backendRefs:
-        - name: livekit
+        - name: livekit-server
           namespace: livekit
