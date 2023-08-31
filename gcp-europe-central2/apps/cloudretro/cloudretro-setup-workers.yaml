@@ -7,7 +7,7 @@ metadata:
     app: worker
 data:
   CLOUD_GAME_EMULATOR_AUTOSAVESEC: "3"
-  CLOUD_GAME_WORKER_NETWORK_COORDINATORADDRESS: cloudretro-coordinator.gcp-europe-central2.stunner.cc
+  CLOUD_GAME_WORKER_NETWORK_COORDINATORADDRESS: cloudretro.gcp-europe-central2.stunner.cc
   CLOUD_GAME_WORKER_NETWORK_PUBLICADDRESS: cloudretro.gcp-europe-central2.stunner.cc
 ---
 # Worker deployment
@@ -75,10 +75,10 @@ spec:
   ingressClassName: nginx
   tls:
   - hosts:
-      - cloudretro.gcp-europe-central2.stunner.cc
-    secretName: cloudretro-tls
+      - cloudretro-worker.gcp-europe-central2.stunner.cc
+    secretName: cloudretro-worker-tls
   rules:
-  - host: cloudretro.gcp-europe-central2.stunner.cc
+  - host: cloudretro-worker.gcp-europe-central2.stunner.cc
     http:
       paths:
       - path: /

@@ -63,10 +63,10 @@ spec:
   ingressClassName: nginx
   tls:
   - hosts:
-      - cloudretro-coordinator.gcp-europe-central2.stunner.cc
+      - cloudretro.gcp-europe-central2.stunner.cc
     secretName: cloudretro-coordinator-tls
   rules:
-  - host: cloudretro-coordinator.gcp-europe-central2.stunner.cc
+  - host: cloudretro.gcp-europe-central2.stunner.cc
     http:
       paths:
       - path: /
