@@ -59,7 +59,7 @@ spec:
     protocol: TCP
   selector:
     app: neko
-  type: LoadBalancer
+  type: ClusterIP
 ---
 apiVersion: v1
 kind: Service
