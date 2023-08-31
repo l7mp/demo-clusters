@@ -7,7 +7,7 @@ metadata:
     app: worker
 data:
   CLOUD_GAME_EMULATOR_AUTOSAVESEC: "3"
-  CLOUD_GAME_WORKER_NETWORK_COORDINATORADDRESS: coordinator-lb-svc
+  CLOUD_GAME_WORKER_NETWORK_COORDINATORADDRESS: coordinator-lb-svc:8000
   CLOUD_GAME_WORKER_NETWORK_PUBLICADDRESS: cloudretro-worker.gcp-europe-central2.stunner.cc
 ---
 # Worker deployment
