@@ -38,6 +38,8 @@ Thus we added the following entries to our DNS provider:
 
 You can also examine that all WebRTC applications are configured to use `gcp-europe-central2.stunner.cc:3478` as their STUN/TURN server, using `relay` mode in the TURN setup.
 
+Also, `Jitsi` does not work in this environment, since we use `plaintext` credentials in the Stunner config, which Jitsi does not support. Please examine another environment for `Jitsi`, where we set up separate Stunner gateways for every app, and the one for `Jitsi` will be configured for `longterm` credentials.
+
 ## ArgoCD reference
 
 The following is a guide on how to start ArgoCD on a cluster, so you might copy this workflow.
