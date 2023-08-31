@@ -10,11 +10,11 @@ data:
   ENABLE_AUTH: "0"
   ENABLE_GUESTS: "1"
   ENABLE_P2P: "0"
-  PUBLIC_URL: "https://jitsi.gcp-europe-central2.stunner.cc" # Change to you're ingress host
+  PUBLIC_URL: "https://jitsi.gcp-europe-central2.stunner.cc" # Change to your ingress host
   TURN_ENABLE: "true"
-  TURN_HOST: "gcp-europe-central2.stunner.cc" # Change to you're Stunenr URL
+  TURN_HOST: "gcp-europe-central2.stunner.cc" # Change to your Stunenr URL
   TURN_PORT: "3478"
-  TURN_CREDENTIALS: "my-shared-secret"
+  TURN_CREDENTIALS: "user-1:pass-1"
   TURN_TRANSPORT: "udp"
   JICOFO_AUTH_USER: "focus"
   XMPP_DOMAIN: gcp-europe-central2.stunner.cc
@@ -69,7 +69,7 @@ metadata:
 data:
   JVB_BREWERY_MUC: 'jvbbrewery'
   JVB_PORT: '10000'
-  JVB_STUN_SERVERS: 'gcp-europe-central2.stunner.cc:3378'
+  JVB_STUN_SERVERS: 'gcp-europe-central2.stunner.cc:3478'
   JVB_TCP_HARVESTER_DISABLED: '1'
   JVB_DISABLE_STUN: '1'
   XMPP_SERVER: 'jitsi-prosody.jitsi.svc.cluster.local'
@@ -160,9 +160,9 @@ spec:
   tls:
   - secretName: jitsi-secret
     hosts:
-    - jitsi.gcp-europe-central2.stunner.cc # Change this to you're domain
+    - jitsi.gcp-europe-central2.stunner.cc # Change this to your domain
   rules:
-  - host: jitsi.gcp-europe-central2.stunner.cc # Change this to you're domain
+  - host: jitsi.gcp-europe-central2.stunner.cc # Change this to your domain
     http:
       paths:
       - path: /
