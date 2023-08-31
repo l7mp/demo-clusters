@@ -116,12 +116,12 @@ spec:
             value: "stunner-auth.stunner.svc.cluster.local"
           - name: STUNNER_AUTH_PORT
             value: "8088"
-          # - name: STUNNER_NAMESPACE
-          #   value: "stunner"
-          # - name: STUNNER_GATEWAY
-          #   value: "udp-gateway"
-          # - name: STUNNER_LISTENER
-          #   value: "udp-listener"
+          - name: STUNNER_NAMESPACE
+            value: "stunner"
+          - name: STUNNER_GATEWAY
+            value: "udp-gateway"
+          - name: STUNNER_LISTENER
+            value: "kurento-one2one"
         volumeMounts:
           - name: webrtc-server-tls
             mountPath: "/app/keys"
