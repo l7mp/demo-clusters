@@ -3,7 +3,7 @@
 This is a GitOps repository to showcase the capabilities of Stunner in various cloud platforms.
 We use [ArgoCD](https://argo-cd.readthedocs.io/en/stable/) to deploy the manifests in this repo into the Kubernetes clusters.
 
-## Google Cloud Platform
+## Google Cloud Platform - Standard GKE
 
 The following environment was started in GCP:
  - Type: GKE standard cluster
@@ -20,9 +20,27 @@ The following environment was started in GCP:
   - `Kurento Magic Mirror`: [magicmirror.gcp-europe-central2.stunner.cc](https://magicmirror.gcp-europe-central2.stunner.cc)
   - `Kurento one to one call`: [one2one.gcp-europe-central2.stunner.cc](https://one2one.gcp-europe-central2.stunner.cc)
 
+Notes on the environment: in this scenario we only run one `stunnerd` which distributes the traffic amoung all the running WebRTC applications. To that end, we only have one `GatewayClass`, `GatewayConfig` and `Gateway` objects (see [here](gcp-europe-central2/argocd-applications/stunner-common.yaml)), and all the applicaitons have their specific `UDPRoute` object (see files in `./gcp-europe-central2/apps/<app name>/udp-route.yaml`).
+
+Only two service are exposed to the internet: `ingress-nginx-controller` for HTTP(S) traffic, and `stunnerd` for STUN/TURN traffic to handle WebRTC connections:
+```
+kubectl get services -A | grep LoadBalancer
+NAMESPACE       NAME                       TYPE           CLUSTER-IP     EXTERNAL-IP      PORT(S)                        AGE           
+ingress-nginx   ingress-nginx-controller   LoadBalancer   10.36.5.172    34.118.56.177    80:32588/TCP,443:31220/TCP     14h
+stunner         udp-gateway                LoadBalancer   10.36.6.102    34.118.104.229   3478:31073/UDP                 12h
+```
+
+Thus we added the following entries to our DNS provider:
+| Type | Hostame                          | Content        |
+|------|----------------------------------|----------------|
+| A    | gcp-europe-central2.stunner.cc   | 34.118.104.229 |
+| A    | *.gcp-europe-central2.stunner.cc | 34.118.56.177  |
+
+You can also examine that all WebRTC applications are configured to use `gcp-europe-central2.stunner.cc:3478` as their STUN/TURN server, using `relay` mode in the TURN setup.
+
 ## ArgoCD reference
 
-The following is a guide on how start ArgoCD on a cluster, so might copy this workflow.
+The following is a guide on how to start ArgoCD on a cluster, so you might copy this workflow.
 ArgoCD has to be bootstraped, and point back to a `git` repository.
 For reference, we'll use the files in the `gcp-europe-central2` folder.
 
@@ -60,7 +78,7 @@ helm repo update
 helm install -n argocd --create-namespace  -f values.yaml argocd argo/argo-cd
 ```
 
-Step 3: add the ArgoCD `Application` that will read install everything else.
+Step 3: add the ArgoCD `Application` that will install everything else.
 The following is the content of the `argocd-applications.yaml` file:
 ```
 apiVersion: argoproj.io/v1alpha1
@@ -94,14 +112,14 @@ kubectl apply -f argocd-applications.yaml
 ```
 
 Step 4: Set-up DNS records.
-In this installation ArgoCD will install an `Nginx Ingress Controller` that will be exposed to the Internet via a `LoadBalacer` type Kubernetes service. In order to reach your applications you have to register that `ExternalIP` to you DNS provider. The following command will show you the public IP address of the ingress controller (it might take a few minutes until your cloud provider provisions a public IP):
+In this installation ArgoCD will install an `Nginx Ingress Controller` that will be exposed to the Internet via a `LoadBalacer` type Kubernetes service. In order to reach your applications you have to register that `ExternalIP` to your DNS provider. The following command will show you the public IP address of the ingress controller (it might take a few minutes until your cloud provider provisions a public IP):
 ```
 kubectl get service -n ingress-nginx ingress-nginx-controller -o jsonpath="{.status.loadBalancer.ingress[0].ip}"
 ```
 
-We took this public IP and register an `A` record for `*.argocd.gcp-europe-central2.stunner.cc` in our DNS provider.
+We took this public IP and registered an `A` record for `*.argocd.gcp-europe-central2.stunner.cc` in our DNS provider.
 
-If that is done, you should be able to access the ArgoCD UI in your domain (in our case `argocd.gcp-europe-central2.stunner.cc`). The user is `admin`, and you get the password with the following command:
+If that is done, you should be able to access the ArgoCD UI in your domain (in our case `argocd.gcp-europe-central2.stunner.cc`). The user is `admin`, and can you get the password with the following command:
 ```
 kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
 ``` 
