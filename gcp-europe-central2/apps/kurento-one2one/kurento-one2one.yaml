@@ -121,7 +121,7 @@ spec:
           - name: STUNNER_GATEWAY
             value: "udp-gateway"
           - name: STUNNER_LISTENER
-            value: "kurento-one2one"
+            value: "default-listener"
         volumeMounts:
           - name: webrtc-server-tls
             mountPath: "/app/keys"
