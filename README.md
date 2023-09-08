@@ -33,7 +33,7 @@ stunner         udp-gateway                LoadBalancer   10.36.6.102    34.118.
 Thus we added the following entries to our DNS provider:
 | Type | Hostame                          | Content        |
 |------|----------------------------------|----------------|
-| A    | gcp-europe-central2.stunner.cc   | 34.118.104.229 |
+| A    | gcp-europe-central2.stunner.cc   | 34.116.153.145 |
 | A    | *.gcp-europe-central2.stunner.cc | 34.118.56.177  |
 
 You can also examine that all WebRTC applications are configured to use `gcp-europe-central2.stunner.cc:3478` as their STUN/TURN server, using `relay` mode in the TURN setup.
