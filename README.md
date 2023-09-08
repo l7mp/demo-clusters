@@ -27,7 +27,7 @@ Only two service are exposed to the internet: `ingress-nginx-controller` for HTT
 kubectl get services -A | grep LoadBalancer
 NAMESPACE       NAME                       TYPE           CLUSTER-IP     EXTERNAL-IP      PORT(S)                        AGE           
 ingress-nginx   ingress-nginx-controller   LoadBalancer   10.36.5.172    34.118.56.177    80:32588/TCP,443:31220/TCP     14h
-stunner         udp-gateway                LoadBalancer   10.36.6.102    34.118.104.229   3478:31073/UDP                 12h
+stunner         udp-gateway                LoadBalancer   10.36.6.102    34.116.153.145   3478:31073/UDP                 12h
 ```
 
 Thus we added the following entries to our DNS provider:
