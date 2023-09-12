@@ -1,0 +1,22 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cloudretro-stunnerd
+spec:
+  destination:
+    name: ''
+    namespace: cloudretro
+    server: 'https://kubernetes.default.svc'
+  source:
+    path: ''
+    repoURL: 'https://l7mp.io/stunner'
+    targetRevision: 0.15.0
+    chart: stunner
+  project: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
+    - ServerSideApply=true

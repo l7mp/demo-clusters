@@ -1,0 +1,48 @@
+apiVersion: gateway.networking.k8s.io/v1alpha2
+kind: GatewayClass
+metadata:
+  name: cloudretro-gatewayclass
+spec:
+  controllerName: "stunner.l7mp.io/gateway-operator"
+  parametersRef:
+    group: "stunner.l7mp.io"
+    kind: GatewayConfig
+    name: cloudretro-gatewayconfig
+    namespace: cloudretro
+  description: "STUNner is a WebRTC ingress gateway for Kubernetes"
+---
+apiVersion: stunner.l7mp.io/v1alpha1
+kind: GatewayConfig
+metadata:
+  name: cloudretro-gatewayconfig
+  namespace: cloudretro
+spec:
+  realm: stunner.l7mp.io
+  authType: plaintext
+  userName: "user-1"
+  password: "pass-1"
+---
+apiVersion: gateway.networking.k8s.io/v1alpha2
+kind: Gateway
+metadata:
+  name: udp-gateway
+  namespace: cloudretro
+spec:
+  gatewayClassName: cloudretro-gatewayclass
+  listeners:
+    - name: default-listener
+      port: 3578
+      protocol: UDP
+---
+apiVersion: gateway.networking.k8s.io/v1alpha2
+kind: UDPRoute
+metadata:
+  name: cloudretro
+  namespace: cloudretro
+spec:
+  parentRefs:
+    - name: udp-gateway
+  rules:
+    - backendRefs:
+        - name: worker-ci-udp-svc
+          namespace: cloudretro
