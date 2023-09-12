@@ -24,10 +24,10 @@ spec:
               nginx.ingress.kubernetes.io/ssl-redirect: "true"
               nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
             hosts: 
-              - argocd.gcp-europe-central2.stunner.cc
+              - argocd.contabo-eu.stunner.cc
             tls: 
             - hosts:
-              - argocd.gcp-europe-central2.stunner.cc
+              - argocd.contabo-eu.stunner.cc
               secretName: argocd-tls
   project: default
   syncPolicy:
