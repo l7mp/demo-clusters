@@ -40,6 +40,41 @@ You can also examine that all WebRTC applications are configured to use `gcp-eur
 
 Also, `Jitsi` does not work in this environment, since we use `plaintext` credentials in the Stunner config, which Jitsi does not support. Please examine another environment for `Jitsi`, where we set up separate Stunner gateways for every app, and the one for `Jitsi` will be configured for `longterm` credentials.
 
+## Contabo VPS
+
+The following environment was started in Contabo:
+ - Type: Single virtual machine with k3s
+ - Kubernetes version: v1.27.5+k3s1
+ - Region: EU (Nuremberg, Germany)
+ - Nodes: 1 x CLOUD VPS M (6 CPU, 16GB memory)
+
+ Runnig applications:
+  - `LiveKit`: [livekit.contabo-eu.stunner.cc](https://livekit.contabo-eu.stunner.cc)
+  - `Jitsi`: [jitsi.contabo-eu.stunner.cc](https://jitsi.contabo-eu.stunner.cc)
+  - `Edumeet`: [edumeet.contabo-eu.stunner.cc](https://edumeet.contabo-eu.stunner.cc)
+  - `Neko`: [neko.contabo-eu.stunner.cc](https://neko.contabo-eu.stunner.cc)
+  - `Cloud Retro`: [cloudretro.contabo-eu.stunner.cc](https://cloudretro.contabo-eu.stunner.cc)
+  - `Kurento Magic Mirror`: [magicmirror.contabo-eu.stunner.cc](https://magicmirror.contabo-eu.stunner.cc)
+  - `Kurento one to one call`: [one2one.contabo-eu.stunner.cc](https://one2one.contabo-eu.stunner.cc)
+
+Notes on the environment: in this scenario we only run one `stunnerd` which distributes the traffic amoung all the running WebRTC applications. To that end, we only have one `GatewayClass`, `GatewayConfig` and `Gateway` objects (see [here](contabo-eu/argocd-applications/stunner-common.yaml)), and all the applicaitons have their specific `UDPRoute` object (see files in `./contabo-eu/apps/<app name>/udp-route.yaml`).
+
+Only two service are exposed to the internet: `ingress-nginx-controller` for HTTP(S) traffic, and `stunnerd` for STUN/TURN traffic to handle WebRTC connections:
+```
+kubectl get services -A | grep LoadBalancer
+NAMESPACE       NAME                       TYPE           CLUSTER-IP     EXTERNAL-IP      PORT(S)                        AGE           
+ingress-nginx   ingress-nginx-controller   LoadBalancer   10.36.5.172    34.118.56.177    80:32588/TCP,443:31220/TCP     14h
+stunner         udp-gateway                LoadBalancer   10.36.6.102    34.116.153.145   3478:31073/UDP                 12h
+```
+
+Thus we added the following entries to our DNS provider:
+| Type | Hostame                 | Content       |
+|------|-------------------------|---------------|
+| A    | contabo-eu.stunner.cc   | 144.91.97.105 |
+| A    | *.contabo-eu.stunner.cc | 144.91.97.105 |
+
+You can also examine that all WebRTC applications are configured to use `contabo-eu.stunner.cc:3478` as their STUN/TURN server, using `relay` mode in the TURN setup.
+
 ## ArgoCD reference
 
 The following is a guide on how to start ArgoCD on a cluster, so you might copy this workflow.
