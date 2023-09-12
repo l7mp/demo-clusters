@@ -31,11 +31,11 @@ spec:
               cert-manager.io/cluster-issuer: letsencrypt-prod
               nginx.ingress.kubernetes.io/ssl-redirect: "true"
             hosts:
-            - grafana.gcp-europe-central2.stunner.cc
+            - grafana.contabo-eu.stunner.cc
             tls:
             - secretName: grafana-general-tls
               hosts:
-              - grafana.gcp-europe-central2.stunner.cc
+              - grafana.contabo-eu.stunner.cc
           persistence:
             enabled: true
           adminPassword: th1sPassw0rdW1llBeChanged!
