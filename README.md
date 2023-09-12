@@ -57,9 +57,8 @@ The following environment was started in Contabo:
   - `Kurento Magic Mirror`: [magicmirror.contabo-eu.stunner.cc](https://magicmirror.contabo-eu.stunner.cc)
   - `Kurento one to one call`: [one2one.contabo-eu.stunner.cc](https://one2one.contabo-eu.stunner.cc)
 
-Notes on the environment: in this scenario we only run one `stunnerd` which distributes the traffic amoung all the running WebRTC applications. To that end, we only have one `GatewayClass`, `GatewayConfig` and `Gateway` objects (see [here](contabo-eu/argocd-applications/stunner-common.yaml)), and all the applicaitons have their specific `UDPRoute` object (see files in `./contabo-eu/apps/<app name>/udp-route.yaml`).
+Notes on the environment: in this scenario we run a separate `stunnerd` for every application with their own `GatewayClass`, `GatewayConfig`, `Gateway` and `UDPRoute` objects (see files `contabo-eu/apps/<app name>/stunnerd.yaml` for the Helm install, and `contabo-eu/apps/<app name>/stunner-gateway.yaml` for the other objects). To that end, every application can have a different `GatewayConfig` with different credentials. This way for e.g., Jitsi can use `longterm` credentials, so here it does work. Also notice that we defined different UDP listening ports for every application. Thoretically this will create a separate `LoadBalancer` type service for every application, but in `k3s` the [built-in load balancer](https://docs.k3s.io/networking#service-load-balancer) will just assign the IP of the VM for every exposed service:
 
-Only two service are exposed to the internet: `ingress-nginx-controller` for HTTP(S) traffic, and `stunnerd` for STUN/TURN traffic to handle WebRTC connections:
 ```
 kubectl get services -A | grep LoadBalancer
 NAMESPACE       NAME                       TYPE           CLUSTER-IP     EXTERNAL-IP      PORT(S)                        AGE           
@@ -67,13 +66,11 @@ ingress-nginx   ingress-nginx-controller   LoadBalancer   10.36.5.172    34.118.
 stunner         udp-gateway                LoadBalancer   10.36.6.102    34.116.153.145   3478:31073/UDP                 12h
 ```
 
-Thus we added the following entries to our DNS provider:
+In our DNS provider we added this public IP (the public IP of the VM itself) for the given entries:
 | Type | Hostame                 | Content       |
 |------|-------------------------|---------------|
 | A    | contabo-eu.stunner.cc   | 144.91.97.105 |
 | A    | *.contabo-eu.stunner.cc | 144.91.97.105 |
-
-You can also examine that all WebRTC applications are configured to use `contabo-eu.stunner.cc:3478` as their STUN/TURN server, using `relay` mode in the TURN setup.
 
 ## ArgoCD reference
 
