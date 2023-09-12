@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: livekit-stunnerd
+  namespace: argocd
+spec:
+  destination:
+    name: ''
+    namespace: livekit
+    server: 'https://kubernetes.default.svc'
+  source:
+    path: ''
+    repoURL: 'https://l7mp.io/stunner'
+    targetRevision: 0.15.0
+    chart: stunner
+  project: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
+    - ServerSideApply=true

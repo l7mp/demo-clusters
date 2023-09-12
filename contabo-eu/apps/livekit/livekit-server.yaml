@@ -1,0 +1,197 @@
+# Redis
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redis
+  labels:
+    app: redis
+spec:
+  serviceName: redis
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      volumes:
+        - name: data
+          emptyDir: {}
+        - name: config
+          configMap:
+            name: redis-config
+            items:
+            - key: redis-config
+              path: redis.conf
+      containers:
+        - name: redis
+          image: redis
+          command:
+            - redis-server
+            - "/redis-master/redis.conf"
+          env:
+          - name: MASTER
+            value: "true"
+          ports:
+          - containerPort: 6379
+          volumeMounts:
+            - mountPath: /redis-master-data
+              name: data
+            - mountPath: /redis-master
+              name: config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: redis
+  name: redis
+spec:
+  ports:
+    - port: 6379
+      protocol: TCP
+      targetPort: 6379
+  selector:
+    app: redis
+  clusterIP: None
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: redis-config
+data:
+  redis-config: |
+    bind 0.0.0.0
+---
+# Livekit server
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: livekit-server
+data:
+  config.yaml: |
+    keys:
+      access_token: secret
+    log_level: debug
+    port: 7880
+    redis:
+      address: redis:6379
+    rtc:
+      port_range_end: 60000
+      port_range_start: 50000
+      tcp_port: 7801
+      stun_servers:
+        - contabo-eu.stunner.cc:3378
+      turn_servers:
+      - credential: pass-1
+        host: contabo-eu.stunner.cc
+        port: 3378
+        protocol: udp
+        username: user-1
+      use_external_ip: false
+    turn:
+      enabled: false
+      loadBalancerAnnotations: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: livekit-server
+  labels:
+    app.kubernetes.io/name: livekit-server
+    app.kubernetes.io/instance: livekit
+    app.kubernetes.io/version: "v1.1.2"
+spec:
+  type: ClusterIP
+  ports:
+    - port: 443
+      targetPort: 7880
+      protocol: TCP
+      name: http
+    - port: 7801
+      targetPort: 7801
+      protocol: TCP
+      name: rtc-tcp
+  selector:
+    app.kubernetes.io/name: livekit-server
+    app.kubernetes.io/instance: livekit
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: livekit-server
+  labels:
+    app.kubernetes.io/name: livekit-server
+    app.kubernetes.io/instance: livekit
+    app.kubernetes.io/version: "v1.1.2"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: livekit-server
+      app.kubernetes.io/instance: livekit
+  template:
+    metadata:
+      annotations:
+        linkerd.io/inject: disabled
+        sidecar.istio.io/inject: "false"
+      labels:
+        app.kubernetes.io/name: livekit-server
+        app.kubernetes.io/instance: livekit
+    spec:
+      terminationGracePeriodSeconds: 18000 # 5 hours
+      containers:
+        - name: livekit-server
+          image: "livekit/livekit-server:v1.1.2"
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: LIVEKIT_CONFIG
+              valueFrom:
+                configMapKeyRef:
+                  name: livekit-server
+                  key: config.yaml
+          ports:
+            - name: http
+              containerPort: 7880
+              protocol: TCP
+            - name: rtc-tcp
+              containerPort: 7801
+              protocol: TCP
+---
+# Ingress
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: livekit-mediaserver
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "*"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+      - mediaserver.contabo-eu.stunner.cc
+    secretName: livekit-secret-tls
+  rules:
+  - host: mediaserver.contabo-eu.stunner.cc
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: livekit-server
+            port:
+              number: 443
+      - path: /api/token
+        pathType: Prefix
+        backend:
+          service:
+            name: lk-token
+            port:
+              number: 80
+          
