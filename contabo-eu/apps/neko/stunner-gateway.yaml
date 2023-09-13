@@ -1,0 +1,48 @@
+apiVersion: gateway.networking.k8s.io/v1alpha2
+kind: GatewayClass
+metadata:
+  name: neko-gatewayclass
+spec:
+  controllerName: "stunner.l7mp.io/gateway-operator"
+  parametersRef:
+    group: "stunner.l7mp.io"
+    kind: GatewayConfig
+    name: neko-gatewayconfig
+    namespace: neko
+  description: "STUNner is a WebRTC ingress gateway for Kubernetes"
+---
+apiVersion: stunner.l7mp.io/v1alpha1
+kind: GatewayConfig
+metadata:
+  name: neko-gatewayconfig
+  namespace: neko
+spec:
+  realm: stunner.l7mp.io
+  authType: plaintext
+  userName: "user-1"
+  password: "pass-1"
+---
+apiVersion: gateway.networking.k8s.io/v1alpha2
+kind: Gateway
+metadata:
+  name: neko-gateway
+  namespace: neko
+spec:
+  gatewayClassName: neko-gatewayclass
+  listeners:
+    - name: default-listener
+      port: 3478
+      protocol: UDP
+---
+apiVersion: gateway.networking.k8s.io/v1alpha2
+kind: UDPRoute
+metadata:
+  name: neko
+  namespace: neko
+spec:
+  parentRefs:
+    - name: neko-gateway
+  rules:
+    - backendRefs:
+        - name: neko-udp
+          namespace: neko
