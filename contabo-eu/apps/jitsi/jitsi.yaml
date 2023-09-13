@@ -42,7 +42,7 @@ data:
   DISABLE_HTTPS: "1"
   JICOFO_AUTH_USER: 'focus'
   XMPP_BOSH_URL_BASE: 'http://jitsi-prosody.jitsi.svc.cluster.local:5280'
-  NGINX_RESOLVER: '10.36.0.10' # Change this kube-dns Cluster IP: kubectl get svc kube-dns -n kube-system -o jsonpath='{.spec.clusterIP}'
+  NGINX_RESOLVER: '10.43.0.10' # Change this kube-dns Cluster IP: kubectl get svc kube-dns -n kube-system -o jsonpath='{.spec.clusterIP}'
 ---
 apiVersion: v1
 kind: ConfigMap
