@@ -1,0 +1,48 @@
+apiVersion: gateway.networking.k8s.io/v1alpha2
+kind: GatewayClass
+metadata:
+  name: edumeet-gatewayclass
+spec:
+  controllerName: "stunner.l7mp.io/gateway-operator"
+  parametersRef:
+    group: "stunner.l7mp.io"
+    kind: GatewayConfig
+    name: edumeet-gatewayconfig
+    namespace: edumeet
+  description: "STUNner is a WebRTC ingress gateway for Kubernetes"
+---
+apiVersion: stunner.l7mp.io/v1alpha1
+kind: GatewayConfig
+metadata:
+  name: edumeet-gatewayconfig
+  namespace: edumeet
+spec:
+  realm: stunner.l7mp.io
+  authType: plaintext
+  userName: "user-1"
+  password: "pass-1"
+---
+apiVersion: gateway.networking.k8s.io/v1alpha2
+kind: Gateway
+metadata:
+  name: edumeet-gateway
+  namespace: edumeet
+spec:
+  gatewayClassName: edumeet-gatewayclass
+  listeners:
+    - name: default-listener
+      port: 3333
+      protocol: UDP
+---
+apiVersion: gateway.networking.k8s.io/v1alpha2
+kind: UDPRoute
+metadata:
+  name: edumeet
+  namespace: edumeet
+spec:
+  parentRefs:
+    - name: edumeet-gateway
+  rules:
+    - backendRefs:
+        - name: edumeet-server
+          namespace: edumeet
