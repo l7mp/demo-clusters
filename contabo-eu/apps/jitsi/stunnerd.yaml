@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: stunnerd
+  name: jitsi-stunnerd
   namespace: argocd
 spec:
   destination:
