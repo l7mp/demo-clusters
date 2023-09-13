@@ -12,7 +12,7 @@ spec:
     directory:
       jsonnet: {}
       recurse: true
-    path: ./gcp-europe-central2/apps/edumeet
+    path: ./contabo-eu/apps/edumeet
     repoURL: https://github.com/l7mp/demo-clusters.git
     targetRevision: HEAD
   syncPolicy:
