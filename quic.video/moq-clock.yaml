@@ -16,10 +16,10 @@ spec:
     spec:
       containers:
       - name: moq-clock
-        image: docker.io/kixelated/moq-clock
+        image: docker.io/megzo/moq-pub
         imagePullPolicy: Always
         command: ["moq-clock"]
-        args: ["--publish", "https://relay.quic.video/clock"]
+        args: ["--publish", "https://relay.moq.stunner.cc/clock"]
         env:
         - name: RUST_LOG
           value: info

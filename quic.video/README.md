@@ -33,7 +33,7 @@ spec:
     - http01:
         ingress:
           class: nginx
-EOF          
+EOF
 ```
 
 ## Run MOQ test
