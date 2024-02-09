@@ -18,8 +18,9 @@ spec:
       - name: moq-pub
         image: docker.io/megzo/moq-pub
         imagePullPolicy: Always
-        args: ["https://relay.moq.stunner.cc/clock"]
         env:
+        - name: ADDR
+          values: https://relay.moq.stunner.cc
         - name: RUST_LOG
           value: info
         - name: RUST_BACKTRACE
