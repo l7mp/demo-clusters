@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: moq-clock
+  name: moq-clock
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: moq-clock
+  template:
+    metadata:
+      labels:
+        app: moq-clock
+    spec:
+      containers:
+      - name: moq-clock
+        image: docker.io/kixelated/moq-clock
+        imagePullPolicy: Always
+        command: ["moq-clock"]
+        args: ["--publish", "https://relay.quic.video/clock"]
+        env:
+        - name: RUST_LOG
+          value: info
+        - name: RUST_BACKTRACE
+          value: "1"
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: moq-clock
+  name: moq-clock
+spec:
+  ports:
+    - port: 8080
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    app: moq-clock

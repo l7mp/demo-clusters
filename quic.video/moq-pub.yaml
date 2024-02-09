@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: moq-pub
+  name: moq-pub
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: moq-pub
+  template:
+    metadata:
+      labels:
+        app: moq-pub
+    spec:
+      containers:
+      - name: moq-pub
+        image: docker.io/kixelated/moq-pub
+        imagePullPolicy: Always
+        env:
+        - name: RUST_LOG
+          value: info
+        - name: RUST_BACKTRACE
+          value: "1"
+        - name: REGION
+          value: eu-central2
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: moq-pub
+  name: moq-pub
+spec:
+  ports:
+    - port: 8080
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    app: moq-pub

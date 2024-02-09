@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: relay
+  name: relay
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: relay
+  template:
+    metadata:
+      labels:
+        app: relay
+    spec:
+      containers:
+      - name: relay
+        image: docker.io/kixelated/moq-rs
+        imagePullPolicy: Always
+        command: ["moq-relay"]
+        args:
+        - --listen
+        - 0.0.0.0:443
+        - --tls-cert
+        - "/cert/tls.crt"
+        - --tls-key
+        - "/cert/tls.key"
+        - --api 
+        - "https://api.moq.stunner.cc"
+        - --api-node
+        - "https://relay.moq.stunner.cc"
+        ports:
+        - containerPort: 443
+        volumeMounts:
+          - name: cert-volume
+            mountPath: "/cert"
+      volumes:
+      - name: cert-volume
+        secret:
+          secretName: relay.moq.stunner.cc
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  labels:
+    app: relay
+  name: relay.moq.stunner.cc
+spec:
+  dnsNames:
+  - relay.moq.stunner.cc
+  issuerRef:
+    group: cert-manager.io
+    kind: ClusterIssuer
+    name: letsencrypt-prod
+  secretName: relay.moq.stunner.cc
+  usages:
+  - digital signature
+  - key encipherment
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: relay
+  name: relay
+spec:
+  ports:
+    - port: 443
+      protocol: UDP
+      targetPort: 443
+  selector:
+    app: relay
+  type: LoadBalancer

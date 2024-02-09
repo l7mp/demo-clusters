@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: moq-api
+  name: moq-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: moq-api
+  template:
+    metadata:
+      labels:
+        app: moq-api
+    spec:
+      containers:
+      - name: moq-api
+        image: docker.io/kixelated/moq-rs
+        imagePullPolicy: Always
+        command: ["moq-api"]
+        args: ["--listen", "0.0.0.0:8080", "--redis", "redis://redis"]
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: moq-api
+  name: moq-api
+spec:
+  ports:
+    - port: 8080
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    app: moq-api
+---
+# Ingress
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: moq-api
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "*"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+      - api.moq.stunner.cc
+    secretName: api.moq.stunner.cc
+  rules:
+  - host: api.moq.stunner.cc
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: moq-api
+            port:
+              number: 80    
