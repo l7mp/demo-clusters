@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: moq-pub
-        image: docker.io/kixelated/moq-pub
+        image: docker.io/megzo/moq-pub
         imagePullPolicy: Always
         env:
         - name: RUST_LOG
