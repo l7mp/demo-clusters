@@ -20,7 +20,7 @@ spec:
         imagePullPolicy: Always
         env:
         - name: ADDR
-          values: https://relay.moq.stunner.cc
+          value: https://relay.moq.stunner.cc
         - name: RUST_LOG
           value: info
         - name: RUST_BACKTRACE
