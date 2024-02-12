@@ -21,6 +21,8 @@ spec:
         command: ["moq-clock"]
         args: ["--publish", "https://relay.moq.stunner.cc/clock"]
         env:
+        - name: REGION
+          value: eu-central2
         - name: RUST_LOG
           value: info
         - name: RUST_BACKTRACE
