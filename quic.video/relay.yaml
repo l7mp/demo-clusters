@@ -54,6 +54,8 @@ spec:
     kind: ClusterIssuer
     name: letsencrypt-prod
   secretName: relay.moq.stunner.cc
+  privateKey:
+    encoding: PKCS8
   usages:
   - digital signature
   - key encipherment
