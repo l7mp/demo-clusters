@@ -38,4 +38,29 @@ EOF
 
 ## Run MOQ test
 
+Normally, you just have to apply the manifests in this folder:
+```
+kubectl apply -f .
+```
+
+The `relay` component will listen in `UDP/443` for `QUIC/WebTransport` connection, so the service
+that expose the `relay` pod has type `LoadBalancer`. You can check the public IP you got from you provider
+with the following command:
+```
+kubectl get service relay
+```
+
+There are also two services exposed via `ingress`: `moq-api` and `moq-web`.
+In this example we used the following domains:
+| Hostame              | IP address   | Note              |
+|----------------------|--------------|-------------------|
+| moq.stunner.cc       | 34.116.151.9 | web frontend [repo](https://github.com/kixelated/moq-js) |
+| api.moq.stunner.cc   | 34.116.151.9 | API server   [repo](https://github.com/kixelated/moq-rs/tree/main/moq-api) |
+| relay.moq.stunner.cc | 34.116.151.9 | WebTransport relay server [repo](https://github.com/kixelated/moq-rs/tree/main/moq-relay) |
+
+If you want to use you're own domain, the following command will replace `moq.stunner.cc` to `example.com` 
+(using [kustomize](https://github.com/kixelated/moq-rs/tree/main/moq-relay) would be more elegant, but for now `sed` will do):
+```
+sed -i 's/moq.stunner.cc/example.com/g' *
+```
 
