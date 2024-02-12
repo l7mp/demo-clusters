@@ -18,6 +18,10 @@ spec:
       - name: web
         image: docker.io/kixelated/moq-js
         imagePullPolicy: Always
+        command:
+        - sh
+        - -c
+        - "grep -lir relay.quic.video . | xargs sed -i 's/relay.quic.video/relay.moq.stunner.cc/g' && node ./web/dist/server/entry.mjs"
         ports:
         - containerPort: 4321
 ---
