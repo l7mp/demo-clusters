@@ -52,7 +52,7 @@ spec:
       - moq.stunner.cc
     secretName: moq.stunner.cc
   rules:
-  - host: moq.stunner.c
+  - host: moq.stunner.cc
     http:
       paths:
       - path: /
