@@ -64,3 +64,14 @@ If you want to use you're own domain, the following command will replace `moq.st
 sed -i 's/moq.stunner.cc/example.com/g' *
 ```
 
+## Notes
+
+Our current test environment ([moq.stunner.cc](https://moq.stunner.cc)) runs on a single VM in GCP using [k3s](https://k3s.io). `k3s` uses a [load balancer](https://docs.k3s.io/networking#service-load-balancer) which just opens the same ports of the VMs that the Kubernetes `services` use. Hence, the public IP of the `Nginx Ingress` (for regular HTTP/HTTPS TCP/80,443) and the `relay` (for HTTP3 UDP/443) will be the same.
+
+In a cloud managed Kubernetes you'll typically get different public IPs for those two services. This usually won't be a problem, you just have to register a different IP in your DNS for the `realy`. However, the `certificate` object for the `relay` domain is currently set up to use the [HTTP challange of Let's Encrypt](https://cert-manager.io/docs/configuration/acme/http01/). Since this uses normal HTTP portocol at `TCP/80`, that traffic will go to the `relay` domain service and be dropped, thus you won't get a valid certificate. In this case we suggest to use [DNS challange](https://cert-manager.io/docs/configuration/acme/dns01/) insted.
+
+Another solution would be to use the `Nginx Ingress` to expose the `relay` service. You can find a guide [here](https://kubernetes.github.io/ingress-nginx/user-guide/exposing-tcp-udp-services/). This way, every service will be exposed under the same public IP, thus this will solve the issue with the HTTP challange, since the ingress can handle the HTTP connection for the challange, and forward the QUIC traffic to the `relay`. However, in this scenario the `ingress-nginx-controller` service would have to listen in both TCP (80, 443) and UDP (443) protocol, which is called a `mixed protocol service`. This [feature](https://github.com/kubernetes/enhancements/issues/1435) is only GA since Kubernetes 1.28, so if you're using an older Kubernetes version you're simple unable to create such service with `type: LoadBalancer`. After 1.28 you can, but still many cloud managed Kubernetes environment does not support this. E.g. I got the following error in GKE (env: Kubernetes version: v1.29.0-gke.1381000, tested in 2024 February):
+```
+Warning  SyncLoadBalancerFailed                 8s (x3 over 23s)  service-controller  Error syncing load balancer: failed to ensure load balancer: mixed protocol is not supported for LoadBalancer
+```
+
