@@ -93,7 +93,7 @@ data:
       use_external_ip: false
     turn:
       enabled: false
-      loadBalancerAnnotations: {}
+      #loadBalancerAnnotations: {}
 ---
 apiVersion: v1
 kind: Service
