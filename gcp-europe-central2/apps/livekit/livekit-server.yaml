@@ -82,8 +82,8 @@ data:
       port_range_end: 60000
       port_range_start: 50000
       tcp_port: 7801
-      stun_servers:
-        - gcp-europe-central2.stunner.cc:3478
+      stun_servers: []
+        #- gcp-europe-central2.stunner.cc:3478
       turn_servers:
       - credential: pass-1
         host: gcp-europe-central2.stunner.cc
