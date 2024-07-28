@@ -358,6 +358,26 @@ spec:
     port: 443
     protocol: TCP
     targetPort: https
+  - name: alt-http
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  - name: alt-https
+    port: 8081
+    protocol: TCP
+    targetPort: 8081
+  - name: alt-http2
+    port: 8082
+    protocol: TCP
+    targetPort: 8082
+  - name: alt-http3
+    port: 8083
+    protocol: TCP
+    targetPort: 8083
+  - name: alt-http4
+    port: 8083
+    protocol: TCP
+    targetPort: 8084
   selector:
     app.kubernetes.io/component: controller
     app.kubernetes.io/instance: ingress-nginx
