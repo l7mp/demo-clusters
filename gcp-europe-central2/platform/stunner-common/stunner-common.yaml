@@ -1,4 +1,24 @@
-apiVersion: gateway.networking.k8s.io/v1alpha2
+apiVersion: stunner.l7mp.io/v1
+kind: Dataplane
+metadata:
+  name: default
+spec:
+  command:
+  - stunnerd
+  args:
+  - -w
+  - --udp-thread-num=16
+  image: l7mp/stunnerd:0.19.0
+  resources:
+    limits:
+      cpu: 2
+      memory: 512Mi
+    requests:
+      cpu: 500m
+      memory: 128Mi
+  terminationGracePeriodSeconds: 3600
+---
+apiVersion: gateway.networking.k8s.io/v1
 kind: GatewayClass
 metadata:
   name: stunner-gatewayclass
@@ -11,7 +31,7 @@ spec:
     namespace: stunner
   description: "STUNner is a WebRTC ingress gateway for Kubernetes"
 ---
-apiVersion: stunner.l7mp.io/v1alpha1
+apiVersion: stunner.l7mp.io/v1
 kind: GatewayConfig
 metadata:
   name: stunner-gatewayconfig
@@ -22,7 +42,7 @@ spec:
   userName: "user-1"
   password: "pass-1"
 ---
-apiVersion: gateway.networking.k8s.io/v1alpha2
+apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
   name: udp-gateway
