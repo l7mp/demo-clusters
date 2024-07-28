@@ -2,6 +2,7 @@ apiVersion: stunner.l7mp.io/v1
 kind: Dataplane
 metadata:
   name: default
+  namespace: stunner
 spec:
   command:
   - stunnerd
@@ -14,8 +15,8 @@ spec:
       cpu: 2
       memory: 512Mi
     requests:
-      cpu: 500m
-      memory: 128Mi
+      cpu: 200m
+      memory: 64Mi
   terminationGracePeriodSeconds: 3600
 ---
 apiVersion: gateway.networking.k8s.io/v1
