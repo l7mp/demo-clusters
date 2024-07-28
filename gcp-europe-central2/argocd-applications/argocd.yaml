@@ -14,18 +14,22 @@ spec:
     chart: argo-cd
     helm:
       values: |-
+        global:
+          domain: argocd.gcp-europe-central2.stunner.cc
+
+        configs:
+          params:
+            server.insecure: true
+
         server:
           ingress:
             enabled: true
             ingressClassName: nginx
-            https: true
-            annotations: 
+            annotations:
+              nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+              nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
               cert-manager.io/cluster-issuer: letsencrypt-prod
-              nginx.ingress.kubernetes.io/ssl-redirect: "true"
-              nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
-            hosts: 
-              - argocd.gcp-europe-central2.stunner.cc
-            tls: 
+            extraTls:
             - hosts:
               - argocd.gcp-europe-central2.stunner.cc
               secretName: argocd-tls
