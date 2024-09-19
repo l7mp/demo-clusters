@@ -10,7 +10,7 @@ spec:
   source:
     path: ''
     repoURL: 'https://l7mp.io/stunner'
-    targetRevision: 0.19.0
+    targetRevision: 0.20.0
     chart: stunner-gateway-operator
   project: default
   syncPolicy:
