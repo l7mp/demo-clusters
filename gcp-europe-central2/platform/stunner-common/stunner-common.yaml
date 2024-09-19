@@ -9,7 +9,7 @@ spec:
   args:
   - -w
   - --udp-thread-num=16
-  image: l7mp/stunnerd:0.19.0
+  image: l7mp/stunnerd:0.20.0
   resources:
     limits:
       cpu: 2
