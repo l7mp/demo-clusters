@@ -1,24 +1,3 @@
-apiVersion: stunner.l7mp.io/v1
-kind: Dataplane
-metadata:
-  name: default
-  namespace: stunner
-spec:
-  command:
-  - stunnerd
-  args:
-  - -w
-  - --udp-thread-num=16
-  image: l7mp/stunnerd:0.20.0
-  resources:
-    limits:
-      cpu: 2
-      memory: 512Mi
-    requests:
-      cpu: 200m
-      memory: 64Mi
-  terminationGracePeriodSeconds: 3600
----
 apiVersion: gateway.networking.k8s.io/v1
 kind: GatewayClass
 metadata:
