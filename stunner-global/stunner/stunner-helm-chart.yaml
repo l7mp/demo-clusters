@@ -1,7 +1,6 @@
 apiVersion: helm.cattle.io/v1
 kind: HelmChart
 metadata:
-  namespace: stunner
   name: stunner-gateway-operator
 spec:
   targetNamespace: stunner
