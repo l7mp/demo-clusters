@@ -1,9 +1,9 @@
 defaultNamespace: stunner
 
-helm:
-  chart: stunner-gateway-operator
-  repo: https://l7mp.io/stunner
-  releaseName: "stunner"
-  version: "0.20.0"
-  namespace: stunner
-  values:
+#helm:
+#  chart: stunner-gateway-operator
+#  repo: https://l7mp.io/stunner
+#  releaseName: "stunner"
+#  version: "0.20.0"
+#  namespace: stunner
+#  values:

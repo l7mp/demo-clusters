@@ -1,0 +1,10 @@
+apiVersion: helm.cattle.io/v1
+kind: HelmChart
+metadata:
+  namespace: stunner
+  name: stunner-gateway-operator
+spec:
+  targetNamespace: stunner
+  version: 0.20.0
+  chart: stunner-gateway-operator
+  repo: https://l7mp.io/stunner
