@@ -1,0 +1,92 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: lk-meet
+  name: lk-meet
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: lk-meet
+  template:
+    metadata:
+      labels:
+        app: lk-meet
+    spec:
+      containers:
+      - name: lk-meet
+        image: megzo/livekit-meet:0.1
+        imagePullPolicy: Always
+        #command: ["yarn"]
+        #args: ["dev"]
+        ports:
+        - containerPort: 3000
+        volumeMounts:
+        - name: config-volume
+          mountPath: /app/.env.local
+          subPath: .env.local
+      volumes:
+      - name: config-volume
+        configMap:
+          name: livekit-meet
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: livekit-meet
+data:
+  .env.local: |
+    # API key and secret. If you use LiveKit Cloud this can be generated via the cloud dashboard.
+    LIVEKIT_API_KEY=access_token
+    LIVEKIT_API_SECRET=secret
+
+    # URL pointing to the LiveKit server.
+    LIVEKIT_URL=wss://mediaserver.global.stunner.cc
+
+    ## PUBLIC
+    NEXT_PUBLIC_LK_TOKEN_ENDPOINT=https://mediaserver.global.stunner.cc/api/token
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: lk-meet
+  labels:
+    app: lk-meet
+spec:
+  ports:
+    - port: 80
+      targetPort: 3000
+      protocol: TCP
+      name: http
+  selector:
+    app: lk-meet
+---
+# Ingress
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: livekit-meet-ingress
+  namespace: livekit
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "*"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+      - livekit.global.stunner.cc
+    secretName: livekit-meet-secret-tls
+  rules:
+  - host: livekit.global.stunner.cc
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: lk-meet
+            port:
+              number: 80
