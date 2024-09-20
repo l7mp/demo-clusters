@@ -13,6 +13,7 @@ The following environment was started in GCP:
 
  Runnig applications:
   - `LiveKit`: [livekit.gcp-europe-central2.stunner.cc](https://livekit.gcp-europe-central2.stunner.cc)
+  - `Janus`: [janus.gcp-europe-central2.stunner.cc](https://janus.gcp-europe-central2.stunner.cc)
   - `Jitsi`: [jitsi.gcp-europe-central2.stunner.cc](https://jitsi.gcp-europe-central2.stunner.cc)
   - `Edumeet`: [edumeet.gcp-europe-central2.stunner.cc](https://edumeet.gcp-europe-central2.stunner.cc)
   - `Neko`: [neko.gcp-europe-central2.stunner.cc](https://neko.gcp-europe-central2.stunner.cc)
