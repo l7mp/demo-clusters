@@ -9,12 +9,13 @@ The following environment was started in GCP:
  - Type: GKE standard cluster
  - Kubernetes version: v1.27.3-gke.100
  - Region: europe-central2 (Warsaw, Poland)
- - Nodes: 1 x e2-standard-4 (4 CPU, 16GB memory)
+ - Nodes: 6 x e2-medium (2 CPU, 4GB memory per VM)
 
  Runnig applications:
   - `LiveKit`: [livekit.gcp-europe-central2.stunner.cc](https://livekit.gcp-europe-central2.stunner.cc)
   - `Janus`: [janus.gcp-europe-central2.stunner.cc](https://janus.gcp-europe-central2.stunner.cc)
   - `Jitsi`: [jitsi.gcp-europe-central2.stunner.cc](https://jitsi.gcp-europe-central2.stunner.cc)
+  - `Elixir WebRTC`: [nexus.gcp-europe-central2.stunner.cc](https://nexus.gcp-europe-central2.stunner.cc)
   - `Edumeet`: [edumeet.gcp-europe-central2.stunner.cc](https://edumeet.gcp-europe-central2.stunner.cc)
   - `Neko`: [neko.gcp-europe-central2.stunner.cc](https://neko.gcp-europe-central2.stunner.cc)
   - `Cloud Retro`: [cloudretro.gcp-europe-central2.stunner.cc](https://cloudretro.gcp-europe-central2.stunner.cc)
