@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: lk-meet
-        image: megzo/livekit-meet:0.1
+        image: megzo/livekit-meet:0.2
         imagePullPolicy: Always
         #command: ["yarn"]
         #args: ["dev"]
