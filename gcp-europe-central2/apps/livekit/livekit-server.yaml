@@ -102,7 +102,7 @@ metadata:
   labels:
     app.kubernetes.io/name: livekit-server
     app.kubernetes.io/instance: livekit
-    app.kubernetes.io/version: "v1.5.3"
+    app.kubernetes.io/version: "v1.7.2"
 spec:
   type: ClusterIP
   ports:
@@ -125,7 +125,7 @@ metadata:
   labels:
     app.kubernetes.io/name: livekit-server
     app.kubernetes.io/instance: livekit
-    app.kubernetes.io/version: "v1.5.3"
+    app.kubernetes.io/version: "v1.7.2"
 spec:
   replicas: 1
   selector:
@@ -144,7 +144,7 @@ spec:
       terminationGracePeriodSeconds: 18000 # 5 hours
       containers:
         - name: livekit-server
-          image: "livekit/livekit-server:v1.5.3"
+          image: "livekit/livekit-server:v1.7.2"
           imagePullPolicy: IfNotPresent
           env:
             - name: LIVEKIT_CONFIG
