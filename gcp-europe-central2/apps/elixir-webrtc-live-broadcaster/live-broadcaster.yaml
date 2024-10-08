@@ -18,8 +18,9 @@ spec:
       - name: live-broadcaster
         image: megzo/elixir-webrtc-live-broadcaster
         command:
-        - /app/bin/server
-        - start
+        - sh
+        - -c 
+        - "chmod +x /app/releases/0.1.0/env.sh && echo '#!/bin/bash' >/app/releases/0.1.0/env.sh &&  /app/bin/live_broadcaster start"
         env:
         - name: SECRET_KEY_BASE
           value: f0e01531666a6ccd5b15879a3c00a15f8feaaea86230cf35d96fe0b8e468bc553549e47edb737a4d1530d1c56a3a7a3827443e1bd00aa46adb44dc6aa087ff9f
