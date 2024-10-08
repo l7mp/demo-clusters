@@ -33,3 +33,16 @@ spec:
     - name: default-listener
       port: 3478
       protocol: UDP
+---
+apiVersion: stunner.l7mp.io/v1
+kind: UDPRoute
+metadata:
+  name: stunner-hairpin
+  namespace: stunner
+spec:
+  parentRefs:
+    - name: udp-gateway
+  rules:
+    - backendRefs:
+        - name: udp-gateway
+          namespace: stunner
