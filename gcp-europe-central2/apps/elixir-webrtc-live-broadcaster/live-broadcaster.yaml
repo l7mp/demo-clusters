@@ -1,0 +1,84 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: live-broadcaster
+  labels:
+    app: live-broadcaster
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: live-broadcaster
+  template:
+    metadata:
+      labels:
+        app: live-broadcaster
+    spec:
+      containers:
+      - name: live-broadcaster
+        image: megzo/elixir-webrtc-live-broadcaster
+        command:
+        - /app/bin/server
+        - start
+        env:
+        - name: SECRET_KEY_BASE
+          value: f0e01531666a6ccd5b15879a3c00a15f8feaaea86230cf35d96fe0b8e468bc553549e47edb737a4d1530d1c56a3a7a3827443e1bd00aa46adb44dc6aa087ff9f
+        - name: PHX_SERVER
+          value: "1"
+        - name: PHX_HOST
+          value: live-broadcaster.gcp-europe-central2.stunner.cc
+        - name: ADMIN_USERNAME
+          value: admin
+        - name: ADMIN_PASSWORD
+          value: admin
+        - name: ICE_PORT_RANGE
+          value: 62000-63000
+        - name: LIVE_BROADCASTER_POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        ports:
+        - name: http
+          containerPort: 4000
+          protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: live-broadcaster
+  labels:
+    app: live-broadcaster
+spec:
+  ports:
+  - port: 4000
+    targetPort: 4000
+    protocol: TCP
+    name: http
+  selector:
+    app: live-broadcaster
+  type: ClusterIP
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+  name: live-broadcaster-ingress
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - live-broadcaster.gcp-europe-central2.stunner.cc
+    secretName: live-broadcaster-tls
+  rules:
+  - host: live-broadcaster.gcp-europe-central2.stunner.cc
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: live-broadcaster
+            port:
+              number: 4000
