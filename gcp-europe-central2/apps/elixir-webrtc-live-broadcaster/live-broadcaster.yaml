@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: live-broadcaster
-        image: megzo/elixir-webrtc-live-broadcaster
+        image: megzo/elixir-webrtc-live-broadcaster:v0.1
         command:
         - sh
         - -c 
