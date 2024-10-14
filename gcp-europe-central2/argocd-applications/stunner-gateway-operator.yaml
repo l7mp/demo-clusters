@@ -14,9 +14,10 @@ spec:
     chart: stunner-gateway-operator
     helm:
       values: |-
-        dataplane:
-          spec:
-            hostNetwork: true
+        stunnerGatewayOperator:
+          dataplane:
+            spec:
+              hostNetwork: true
   project: default
   syncPolicy:
     automated:
