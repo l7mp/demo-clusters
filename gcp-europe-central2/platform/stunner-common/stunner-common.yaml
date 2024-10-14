@@ -32,7 +32,10 @@ spec:
   listeners:
     - name: default-listener
       port: 3478
-      protocol: UDP
+      protocol: TURN-UDP
+    - name: tcp-listener
+      port: 3478
+      protocol: TURN-TCP
 ---
 apiVersion: stunner.l7mp.io/v1
 kind: UDPRoute
