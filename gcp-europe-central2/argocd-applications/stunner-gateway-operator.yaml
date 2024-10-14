@@ -12,6 +12,11 @@ spec:
     repoURL: 'https://l7mp.io/stunner'
     targetRevision: 0.20.0
     chart: stunner-gateway-operator
+    helm:
+      values: |-
+        dataplane:
+          spec:
+            hostNetwork: true
   project: default
   syncPolicy:
     automated:
