@@ -46,3 +46,28 @@ spec:
     - backendRefs:
         - name: udp-gateway
           namespace: stunner
+---
+# Static IPs of other STUNner clusters
+apiVersion: stunner.l7mp.io/v1
+kind: StaticService
+metadata:
+  name: static-svc
+  namespace: stunner
+spec:
+  prefixes:
+    - "152.66.0.0/16" # BME
+    - "89.134.30.213/32" # Peter's IP
+---
+apiVersion: stunner.l7mp.io/v1
+kind: UDPRoute
+metadata:
+  name: static-services
+  namespace: stunner
+spec:
+  parentRefs:
+    - name: udp-gateway
+  rules:
+    - backendRefs:
+        - group: stunner.l7mp.io
+          kind: StaticService
+          name: static-svc
