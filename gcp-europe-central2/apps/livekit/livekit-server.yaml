@@ -94,6 +94,8 @@ data:
     turn:
       enabled: false
       #loadBalancerAnnotations: {}
+    ingress:
+      whip_base_url: https://whip.gcp-europe-central2.stunner.cc
 ---
 apiVersion: v1
 kind: Service
