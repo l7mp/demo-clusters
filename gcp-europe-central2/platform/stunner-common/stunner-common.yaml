@@ -37,19 +37,19 @@ spec:
       port: 3478
       protocol: TURN-TCP
 ---
-#apiVersion: stunner.l7mp.io/v1
-#kind: UDPRoute
-#metadata:
-#  name: stunner-hairpin
-#  namespace: stunner
-#spec:
-#  parentRefs:
-#    - name: udp-gateway
-#  rules:
-#    - backendRefs:
-#        - name: udp-gateway
-#          namespace: stunner
-#---
+apiVersion: stunner.l7mp.io/v1
+kind: UDPRoute
+metadata:
+  name: stunner-hairpin
+  namespace: stunner
+spec:
+  parentRefs:
+    - name: udp-gateway
+  rules:
+    - backendRefs:
+        - name: udp-gateway
+          namespace: stunner
+---
 # Static IPs of other STUNner clusters
 apiVersion: stunner.l7mp.io/v1
 kind: StaticService
