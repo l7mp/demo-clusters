@@ -82,13 +82,13 @@ data:
       port_range_end: 60000
       port_range_start: 50000
       tcp_port: 7801
-      stun_servers: []
-        #- gcp-europe-central2.stunner.cc:3478
+      stun_servers:
+        - udp-gateway.stunner.svc.cluster.local:3478
       turn_servers:
       - credential: pass-1
         host: gcp-europe-central2.stunner.cc
-        port: 5349
-        protocol: tls
+        port: 3478
+        protocol: udp
         username: user-1
       use_external_ip: false
     turn:
