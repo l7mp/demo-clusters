@@ -88,7 +88,7 @@ data:
       - credential: pass-1
         host: gcp-europe-central2.stunner.cc
         port: 3478
-        protocol: udp
+        protocol: tcp
         username: user-1
       use_external_ip: false
     turn:
