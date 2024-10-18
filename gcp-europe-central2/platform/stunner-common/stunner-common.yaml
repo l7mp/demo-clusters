@@ -36,6 +36,22 @@ spec:
     - name: tcp-listener
       port: 3478
       protocol: TURN-TCP
+    - name: tls-listener
+      port: 5349
+      protocol: TURN-TLS
+      tls:
+        certificateRef:
+          kind: Secret
+          name: stunner-tls
+          namespace: stunner
+    - name: dtls-listener
+      port: 5349
+      protocol: TURN-DTLS
+      tls:
+        certificateRef:
+          kind: Secret
+          name: stunner-tls
+          namespace: stunner
 ---
 apiVersion: stunner.l7mp.io/v1
 kind: UDPRoute
