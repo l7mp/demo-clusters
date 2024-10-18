@@ -75,3 +75,20 @@ spec:
         - group: stunner.l7mp.io
           kind: StaticService
           name: static-svc
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: stunner-tls
+  namespace: stunner
+spec:
+  dnsNames:
+  - gcp-europe-central2.stunner.cc
+  issuerRef:
+    group: cert-manager.io
+    kind: ClusterIssuer
+    name: letsencrypt-prod
+  secretName: stunner-tls
+  usages:
+  - digital signature
+  - key encipherment
