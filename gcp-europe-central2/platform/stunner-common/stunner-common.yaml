@@ -100,6 +100,8 @@ metadata:
 spec:
   dnsNames:
   - gcp-europe-central2.stunner.cc
+  - api.stunner.cc
+  - iceperf.stunner.cc
   issuerRef:
     group: cert-manager.io
     kind: ClusterIssuer
@@ -108,3 +110,29 @@ spec:
   usages:
   - digital signature
   - key encipherment
+---
+# ingress for auth service
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: stunner-auth
+  namespace: stunner
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+      - api.stunner.cc
+    secretName: stunner-tls
+  rules:
+  - host: api.stunner.cc
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: stunner-auth
+            port:
+              number: 8088
