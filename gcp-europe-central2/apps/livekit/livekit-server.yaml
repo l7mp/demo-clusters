@@ -95,7 +95,8 @@ data:
       enabled: false
       #loadBalancerAnnotations: {}
     ingress:
-      whip_base_url: https://whip.gcp-europe-central2.stunner.cc
+      rtmp_base_url: rtmp://rtmp.gcp-europe-central2.stunner.cc/x
+      whip_base_url: https://whip.gcp-europe-central2.stunner.cc/w
 ---
 apiVersion: v1
 kind: Service
