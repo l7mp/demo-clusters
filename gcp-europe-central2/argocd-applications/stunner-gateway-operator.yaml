@@ -10,7 +10,7 @@ spec:
   source:
     path: ''
     repoURL: 'https://l7mp.io/stunner'
-    targetRevision: 0.20.0
+    targetRevision: 1.0.0
     chart: stunner-gateway-operator
     helm:
       values: |-
