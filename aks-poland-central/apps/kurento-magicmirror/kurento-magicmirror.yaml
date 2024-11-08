@@ -1,0 +1,100 @@
+# WebRTC application server
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webrtc-server
+spec:
+  selector:
+    matchLabels:
+      app: webrtc-server
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: webrtc-server
+    spec:
+      containers:
+      - name: webrtc-server
+        image: l7mp/kurento-magic-mirror-server:latest
+        command: ["npm"]
+        args: ["start", "--", "--as_uri=https://0.0.0.0:8443", "--ws_uri=ws://kms.kurento-one2one.svc.cluster.local:8888/kurento"]
+        imagePullPolicy: Always
+        # command: ["/bin/sh"]
+        # args: ["-c", "while true; do sleep 10;done"]
+        # imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8443
+        # TURN server config to return to the user
+        env:
+          - name: STUNNER_AUTH_ADDR
+            value: "stunner-auth.stunner.svc.cluster.local"
+          - name: STUNNER_AUTH_PORT
+            value: "8088"
+          - name: STUNNER_NAMESPACE
+            value: "stunner"
+          - name: STUNNER_GATEWAY
+            value: "udp-gateway"
+          - name: STUNNER_LISTENER
+            value: "default-listener"
+        volumeMounts:
+          - name: webrtc-server-tls
+            mountPath: "/app/keys"
+            readOnly: true
+
+      # - name: net-debug
+      #   image: l7mp/net-debug:latest
+      #   command: ["/bin/sh"]
+      #   args: ["-c", "while true; do echo hello; sleep 10;done"]
+
+      volumes:
+        - name: webrtc-server-tls
+          secret:
+            secretName: magicmirror-secret-tls
+            items:
+              - key: tls.crt
+                path: server.crt
+              - key: tls.key
+                path: server.key
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: webrtc-server
+  labels:
+    app: webrtc-server
+spec:
+  selector:
+    app: webrtc-server
+  ports:
+    - port: 8443
+      protocol: TCP
+      name: webrtc-server-port
+---
+# Ingress
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: kurento-magicmirror
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/backend-protocol: HTTPS
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+      - magicmirror.aks-poland-central.stunner.cc
+    secretName: magicmirror-secret-tls
+  rules:
+  - host: magicmirror.aks-poland-central.stunner.cc
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: webrtc-server
+            port:
+              number: 8443

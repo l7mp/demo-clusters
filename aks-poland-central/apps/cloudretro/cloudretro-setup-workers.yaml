@@ -1,0 +1,90 @@
+# Configmap for Worker
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cloudretro-config-w
+  labels:
+    app: worker
+data:
+  CLOUD_GAME_EMULATOR_AUTOSAVESEC: "3"
+  CLOUD_GAME_WORKER_NETWORK_COORDINATORADDRESS: coordinator-lb-svc:8000
+  CLOUD_GAME_WORKER_NETWORK_PUBLICADDRESS: cloudretro-worker.aks-poland-central.stunner.cc
+---
+# Worker deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: worker-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: worker
+  template:
+    metadata:
+      labels:
+        app: worker
+    spec:
+      containers:
+      - name: worker
+        image: valniae/snekyrepo:crdi
+        envFrom:
+          - configMapRef:
+              name: cloudretro-config-w
+        command: ["worker"]
+        args: ["--v=5"]
+---
+# Worker Service for HTTP
+apiVersion: v1
+kind: Service
+metadata:
+  name: worker-lb-svc
+  namespace: cloudretro
+spec:
+  selector:
+    app: worker
+  ports:
+    - port: 9000
+      targetPort: 9000
+  type: ClusterIP
+---
+# Worker ClusterIP for STUNner forwarding
+apiVersion: v1
+kind: Service
+metadata:
+  name: worker-ci-udp-svc
+  namespace: cloudretro
+spec:
+  selector:
+    app: worker
+  ports:
+    - protocol: UDP
+      port: 8443
+      targetPort: 8443
+  type: ClusterIP
+---
+# Ingress
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: cloudretro-worker
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+      - cloudretro-worker.aks-poland-central.stunner.cc
+    secretName: cloudretro-worker-tls
+  rules:
+  - host: cloudretro-worker.aks-poland-central.stunner.cc
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: worker-lb-svc
+            port:
+              number: 9000

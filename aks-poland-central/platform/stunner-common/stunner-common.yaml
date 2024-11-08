@@ -1,0 +1,139 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: GatewayClass
+metadata:
+  name: stunner-gatewayclass
+spec:
+  controllerName: "stunner.l7mp.io/gateway-operator"
+  parametersRef:
+    group: "stunner.l7mp.io"
+    kind: GatewayConfig
+    name: stunner-gatewayconfig
+    namespace: stunner
+  description: "STUNner is a WebRTC ingress gateway for Kubernetes"
+---
+apiVersion: stunner.l7mp.io/v1
+kind: GatewayConfig
+metadata:
+  name: stunner-gatewayconfig
+  namespace: stunner
+spec:
+  realm: stunner.l7mp.io
+  authType: plaintext
+  userName: "user-1"
+  password: "pass-1"
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: udp-gateway
+  namespace: stunner
+spec:
+  gatewayClassName: stunner-gatewayclass
+  listeners:
+    - name: default-listener
+      port: 3478
+      protocol: TURN-UDP
+    - name: tcp-listener
+      port: 3478
+      protocol: TURN-TCP
+    - name: tls-listener
+      port: 5349
+      protocol: TURN-TLS
+      tls:
+        certificateRefs:
+        - kind: Secret
+          name: stunner-tls
+          namespace: stunner
+    - name: dtls-listener
+      port: 5349
+      protocol: TURN-DTLS
+      tls:
+        certificateRefs:
+        - kind: Secret
+          name: stunner-tls
+          namespace: stunner
+---
+apiVersion: stunner.l7mp.io/v1
+kind: UDPRoute
+metadata:
+  name: stunner-hairpin
+  namespace: stunner
+spec:
+  parentRefs:
+    - name: udp-gateway
+  rules:
+    - backendRefs:
+        - name: udp-gateway
+          namespace: stunner
+---
+# Static IPs of other STUNner clusters
+apiVersion: stunner.l7mp.io/v1
+kind: StaticService
+metadata:
+  name: static-svc
+  namespace: stunner
+spec:
+  prefixes:
+    - "152.66.0.0/16" # BME
+    - "157.181.0.0/16" # ELTE
+    - "89.134.30.0/24" # Peter's IP
+    - "52.174.147.2/32" # Azure VM
+---
+apiVersion: stunner.l7mp.io/v1
+kind: UDPRoute
+metadata:
+  name: static-services
+  namespace: stunner
+spec:
+  parentRefs:
+    - name: udp-gateway
+  rules:
+    - backendRefs:
+        - group: stunner.l7mp.io
+          kind: StaticService
+          name: static-svc
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: stunner-tls
+  namespace: stunner
+spec:
+  dnsNames:
+  - aks-poland-central.stunner.cc
+  - api.stunner.cc
+  - iceperf.stunner.cc
+  issuerRef:
+    group: cert-manager.io
+    kind: ClusterIssuer
+    name: dns-challange
+  secretName: stunner-tls
+  usages:
+  - digital signature
+  - key encipherment
+---
+# ingress for auth service
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: stunner-auth
+  namespace: stunner
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+      - api.stunner.cc
+    secretName: stunner-tls
+  rules:
+  - host: api.stunner.cc
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: stunner-auth
+            port:
+              number: 8088

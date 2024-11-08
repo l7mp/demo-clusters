@@ -1,0 +1,78 @@
+---
+# Configmap for Coordinator
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cloudretro-config-c
+  labels:
+    app: coordinator
+data:
+  CLOUD_GAME_WEBRTC_ICESERVERS_0_URL: turn:aks-poland-central.stunner.cc:3478
+  CLOUD_GAME_WEBRTC_ICESERVERS_0_USERNAME: user-1    
+  CLOUD_GAME_WEBRTC_ICESERVERS_0_CREDENTIAL: pass-1
+---
+# Coordinator deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: coordinator-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: coordinator
+  template:
+    metadata:
+      labels:
+        app: coordinator
+    spec:
+      containers:
+      - name: coordinator
+        image: valniae/snekyrepo:crdi
+        envFrom:
+          - configMapRef:
+              name: cloudretro-config-c
+        command: ["coordinator"]
+        args: ["--v=5"]
+        ports:
+        - containerPort: 8000
+---
+# Coordinator Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: coordinator-lb-svc
+spec:
+  selector:
+    app: coordinator
+  ports:
+    - port: 8000
+      targetPort: 8000
+      #nodePort: 30001
+  type: ClusterIP
+---
+# Ingress
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: cloudretro-coordinator
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+      - cloudretro.aks-poland-central.stunner.cc
+    secretName: cloudretro-coordinator-tls
+  rules:
+  - host: cloudretro.aks-poland-central.stunner.cc
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: coordinator-lb-svc
+            port:
+              number: 8000

@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: lk-token
+  name: lk-token
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: lk-token
+  template:
+    metadata:
+      labels:
+        app: lk-token
+    spec:
+      containers:
+      - name: livekit-token-generator
+        image: megzo/livekit-token-generator:latest
+        env:
+        - name: APIKEY
+          value: access_token
+        - name: APISECRET
+          value: secret
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: lk-token
+  labels:
+    app: lk-token
+spec:
+  ports:
+    - port: 80
+      targetPort: 8080
+      protocol: TCP
+      name: http
+  selector:
+    app: lk-token
