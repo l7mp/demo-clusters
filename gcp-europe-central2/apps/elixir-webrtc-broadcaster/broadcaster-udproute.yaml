@@ -1,0 +1,11 @@
+kind: UDPRoute
+metadata:
+  name: broadcaster
+  namespace: stunner
+spec:
+  parentRefs:
+    - name: udp-gateway
+  rules:
+    - backendRefs:
+        - name: broadcaster
+          namespace: broadcaster
