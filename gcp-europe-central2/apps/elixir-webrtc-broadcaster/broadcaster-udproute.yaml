@@ -1,3 +1,4 @@
+apiVersion: stunner.l7mp.io/v1
 kind: UDPRoute
 metadata:
   name: broadcaster
