@@ -3,7 +3,7 @@ kind: StatefulSet
 metadata:
   name: broadcaster
 spec:
-  replicas: 3
+  replicas: 1
   serviceName: broadcaster-headless
   selector:
     matchLabels:
