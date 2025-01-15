@@ -77,7 +77,7 @@ spec:
     - "152.66.0.0/16" # BME
     - "157.181.0.0/16" # ELTE
     - "89.134.30.0/24" # Peter's IP
-    - "52.174.147.2/32" # Azure VM
+    - "9.141.42.146/32" # Azure VM
 ---
 apiVersion: stunner.l7mp.io/v1
 kind: UDPRoute
